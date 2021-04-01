@@ -363,6 +363,7 @@ export default class GameLevel extends Scene {
         enemy.addPhysics();
         enemy.addAI(EnemyController, aiOptions);
         enemy.setGroup("enemy");
+        enemy.setTrigger("player", HW4_Events.PLAYER_HIT_ENEMY, null);
     }
 
     // HOMEWORK 4 - TODO
@@ -395,7 +396,64 @@ export default class GameLevel extends Scene {
      * 
      * You can implement this method using whatever math you see fit.
      */
-    protected handlePlayerEnemyCollision(player: AnimatedSprite, enemy: AnimatedSprite) {}
+    protected handlePlayerEnemyCollision(player: AnimatedSprite, enemy: AnimatedSprite) {
+        let player_box = player.boundary;
+        let enemy_box = enemy.boundary;
+        let enemy_id = enemy.id;
+        if(enemy_id == 22 || enemy_id == 53){//bunny
+            if(player_box.bottom > enemy_box.top && player_box.bottom < enemy_box.center.y){
+                //play enemy death noise
+                enemy.animation.play("DYING", false, HW4_Events.ENEMY_DIED); 
+            }else if(player_box.top < enemy_box.bottom && player_box.top > enemy_box.center.y){
+                //play enemy death noise
+                enemy.animation.play("DYING", false, HW4_Events.ENEMY_DIED); 
+            }else{
+                if(!enemy.animation.isPlaying("DYING")){
+                    this.DecPlayerLife(player);
+                }
+            }
+        }
+        if(enemy_id == 23 || enemy_id == 56){//hopper
+            if(player_box.top < enemy_box.bottom && player_box.bottom > enemy_box.bottom){
+                //play enemy death noise
+                enemy.animation.play("DYING", false, HW4_Events.ENEMY_DIED); 
+            }else{
+                if(!enemy.animation.isPlaying("DYING")){
+                    this.DecPlayerLife(player);
+                }
+            }
+        }
+        if(enemy_id == 54 || enemy_id == 55){//spikeballs
+            this.DecPlayerLife(player);
+        }
+    }
+
+    /**
+     * Decreases the amount of life the player has
+     * @param amt The amount to add to the player life
+     */
+     protected DecPlayerLife(player: AnimatedSprite): void {
+        this.respawnTimer.start();
+        player.disablePhysics();
+        player.freeze();
+        this.incPlayerLife(-1);
+        player.tweens.add("die", {
+            startDelay: 0,
+            duration: 300,
+            effects: [
+                {
+                    property: "positionY",
+                    resetOnComplete: true,
+                    start: player.position.y - 64,
+                    end: player.position.y,
+                    ease: EaseFunctionType.IN_OUT_SINE,
+                    onEnd: HW4_Events.LEVEL_START
+                }
+            ],
+            reverseOnComplete: false
+        });
+        player.tweens.play("die", false);
+    }
 
     /**
      * Increments the amount of life the player has
