@@ -4,6 +4,8 @@ import Debug from "../../Wolfie2D/Debug/Debug";
 import GameNode from "../../Wolfie2D/Nodes/GameNode";
 import Sprite from "../../Wolfie2D/Nodes/Sprites/Sprite";
 import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
+import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
+import { HW4_Events } from "../hw4_enums";
 import Fall from "./PlayerStates/Fall";
 import Idle from "./PlayerStates/Idle";
 import InAir from "./PlayerStates/InAir";
@@ -57,6 +59,7 @@ export default class PlayerController extends StateMachineAI {
         this.coin = this.owner.getScene().add.sprite("coin", "coinLayer");
         this.coin.position.set(-100, -100);
         this.coin.scale.set(2, 2);
+        
     }
 
     initializePlatformer(): void {
@@ -88,6 +91,40 @@ export default class PlayerController extends StateMachineAI {
 
     update(deltaT: number): void {
 		super.update(deltaT);
+
+        if(this.owner.onCeiling && this.owner.collidedWithTilemap){
+            var blockcoord = new Vec2(this.owner.position.x, this.owner.position.y - 32);
+            var block = this.tilemap.getTileAtWorldPosition(blockcoord);
+            if(block == 17){
+                blockcoord = this.tilemap.getColRowAt(blockcoord);
+                this.tilemap.setTileAtRowCol(blockcoord, 18);
+                this.coin.tweens.add("up", {
+                    startDelay: 0,
+                    duration: 300,
+                    effects: [
+                        {
+                            property: "alpha",
+                            start: 1,
+                            end: 0,
+                            ease: EaseFunctionType.IN_OUT_QUAD
+                        },
+                        {
+                            property: "positionY",
+                            resetOnComplete: true,
+                            start: blockcoord.y * 32 - 32,
+                            end: blockcoord.y * 32 - 64,
+                            ease: EaseFunctionType.IN_OUT_SINE,
+                        }
+                    ],
+                    reverseOnComplete: false,
+                    onEnd: HW4_Events.PLAYER_HIT_COIN_BLOCK
+                });
+                this.coin.position.set(blockcoord.x * 32 + 16, blockcoord.y * 32 - 64);
+                // this.coin.visible = true;
+                // this.coin.active = true;
+                this.coin.tweens.play("up", false);
+            }
+        }
 
 		if(this.currentState instanceof Jump){
 			Debug.log("playerstate", "Player State: Jump");

@@ -23,6 +23,8 @@ export default class MainMenu extends Scene {
         let size = this.viewport.getHalfSize();
         this.viewport.setFocus(size);
 
+        this.viewport.setZoomLevel(1);
+
         // Create a play button
         let playBtn = <Button>this.add.uiElement(UIElementType.BUTTON, "Main", {position: new Vec2(size.x, size.y), text: "Play Game"});
         playBtn.backgroundColor = Color.TRANSPARENT;

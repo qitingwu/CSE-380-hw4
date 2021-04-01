@@ -16,6 +16,7 @@ export default class Level1 extends GameLevel {
         this.load.audio("jump", "hw4_assets/sounds/jump.wav");
         this.load.audio("coin", "hw4_assets/sounds/coin.wav");
         this.load.audio("player_death", "hw4_assets/sounds/player_death.wav");
+        this.load.audio("menu", "hw4_assets/music/menu.mp3");
     }
 
     // HOMEWORK 4 - TODO
@@ -32,6 +33,16 @@ export default class Level1 extends GameLevel {
      */
     unloadScene(){
         // Keep resources - this is up to you
+        this.load.keepImage("background");
+        this.load.keepImage("coin");
+        this.load.keepSpritesheet("player");
+        this.load.keepSpritesheet("hopper");
+        this.load.keepSpritesheet("bunny");
+        this.load.keepAudio("jump");
+        this.load.keepAudio("coin");
+        this.load.keepAudio("player_death");
+        this.load.keepAudio("menu");
+        this.load.unloadAllResources();
     }
 
     startScene(): void {

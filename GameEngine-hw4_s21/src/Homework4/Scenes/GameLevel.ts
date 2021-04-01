@@ -47,6 +47,8 @@ export default class GameLevel extends Scene {
     protected levelTransitionScreen: Rect;
 
     startScene(): void {
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "menu", loop: true, holdReference: true});
+
         // Do the game level standard initializations
         this.initLayers();
         this.initViewport();
@@ -446,11 +448,11 @@ export default class GameLevel extends Scene {
                     resetOnComplete: true,
                     start: player.position.y - 64,
                     end: player.position.y,
-                    ease: EaseFunctionType.IN_OUT_SINE,
-                    onEnd: HW4_Events.LEVEL_START
+                    ease: EaseFunctionType.IN_OUT_SINE
                 }
             ],
-            reverseOnComplete: false
+            reverseOnComplete: false,
+            onEnd: HW4_Events.LEVEL_START
         });
         player.tweens.play("die", false);
     }
