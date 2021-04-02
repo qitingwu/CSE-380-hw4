@@ -405,6 +405,8 @@ export default class GameLevel extends Scene {
         if(enemy_id == 22 || enemy_id == 53){//bunny
             if(player_box.bottom > enemy_box.top && player_box.bottom < enemy_box.center.y){
                 //play enemy death noise
+                enemy.disablePhysics();
+                enemy.freeze();
                 enemy.animation.play("DYING", false, HW4_Events.ENEMY_DIED);
                 this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "bunnydeath", loop: false, holdReference: false});
             }else if(player_box.top < enemy_box.bottom && player_box.top > enemy_box.center.y){
@@ -418,9 +420,10 @@ export default class GameLevel extends Scene {
             }
         }
         if(enemy_id == 23 || enemy_id == 56){//hopper
-            if(player_box.top < enemy_box.bottom && player_box.bottom > enemy_box.bottom){
+            if(player_box.top < enemy_box.bottom && player_box.top > enemy_box.top){
                 //play enemy death noise
-                enemy.tweens.stopAll();
+                enemy.disablePhysics();
+                enemy.freeze();
                 enemy.animation.play("DYING", false, HW4_Events.ENEMY_DIED); 
                 this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "hopperdeath", loop: false, holdReference: false});
             }else{
