@@ -47,7 +47,7 @@ export default class GameLevel extends Scene {
     protected levelTransitionScreen: Rect;
 
     startScene(): void {
-        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "menu", loop: true, holdReference: true});
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "spook", loop: true, holdReference: true});
 
         // Do the game level standard initializations
         this.initLayers();
@@ -405,10 +405,12 @@ export default class GameLevel extends Scene {
         if(enemy_id == 22 || enemy_id == 53){//bunny
             if(player_box.bottom > enemy_box.top && player_box.bottom < enemy_box.center.y){
                 //play enemy death noise
-                enemy.animation.play("DYING", false, HW4_Events.ENEMY_DIED); 
+                enemy.animation.play("DYING", false, HW4_Events.ENEMY_DIED);
+                this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "bunnydeath", loop: false, holdReference: false});
             }else if(player_box.top < enemy_box.bottom && player_box.top > enemy_box.center.y){
                 //play enemy death noise
                 enemy.animation.play("DYING", false, HW4_Events.ENEMY_DIED); 
+                this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "bunnydeath", loop: false, holdReference: false});
             }else{
                 if(!enemy.animation.isPlaying("DYING")){
                     this.DecPlayerLife(player);
@@ -418,7 +420,9 @@ export default class GameLevel extends Scene {
         if(enemy_id == 23 || enemy_id == 56){//hopper
             if(player_box.top < enemy_box.bottom && player_box.bottom > enemy_box.bottom){
                 //play enemy death noise
+                enemy.tweens.stopAll();
                 enemy.animation.play("DYING", false, HW4_Events.ENEMY_DIED); 
+                this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "hopperdeath", loop: false, holdReference: false});
             }else{
                 if(!enemy.animation.isPlaying("DYING")){
                     this.DecPlayerLife(player);
@@ -438,6 +442,9 @@ export default class GameLevel extends Scene {
         this.respawnTimer.start();
         player.disablePhysics();
         player.freeze();
+        if(GameLevel.livesCount == 1){
+            this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: "spook"});
+        }
         this.incPlayerLife(-1);
         player.tweens.add("die", {
             startDelay: 0,

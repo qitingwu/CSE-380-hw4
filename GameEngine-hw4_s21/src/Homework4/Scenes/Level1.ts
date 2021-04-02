@@ -1,5 +1,6 @@
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import Debug from "../../Wolfie2D/Debug/Debug";
+import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
 import GameLevel from "./GameLevel";
 import Level2 from "./Level2";
 
@@ -15,8 +16,10 @@ export default class Level1 extends GameLevel {
         this.load.spritesheet("bunny", "hw4_assets/spritesheets/ghostBunny.json");
         this.load.audio("jump", "hw4_assets/sounds/jump.wav");
         this.load.audio("coin", "hw4_assets/sounds/coin.wav");
+        this.load.audio("bunnydeath", "hw4_assets/sounds/bunny.wav");
+        this.load.audio("hopperdeath", "hw4_assets/sounds/hopper.wav");
         this.load.audio("player_death", "hw4_assets/sounds/player_death.wav");
-        this.load.audio("menu", "hw4_assets/music/menu.mp3");
+        this.load.audio("spook", "hw4_assets/music/spook.mp3");
     }
 
     // HOMEWORK 4 - TODO
@@ -32,6 +35,7 @@ export default class Level1 extends GameLevel {
      * not a lot of load time for such a small project).
      */
     unloadScene(){
+        this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: "spook"});
         // Keep resources - this is up to you
         this.load.keepImage("background");
         this.load.keepImage("coin");
@@ -41,7 +45,9 @@ export default class Level1 extends GameLevel {
         this.load.keepAudio("jump");
         this.load.keepAudio("coin");
         this.load.keepAudio("player_death");
-        this.load.keepAudio("menu");
+        this.load.keepAudio("spook");
+        this.load.keepAudio("bunnydeath");
+        this.load.keepAudio("hopperdeath");
         this.load.unloadAllResources();
     }
 
